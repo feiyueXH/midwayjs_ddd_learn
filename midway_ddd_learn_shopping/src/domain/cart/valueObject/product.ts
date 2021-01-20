@@ -2,16 +2,16 @@ import { ValueObject } from '../../../infrastructure/core/valueObject';
 
 export class Product extends ValueObject {
   constructor(
-    productId: string,
-    productName: string,
-    price: number,
-    stock: number
+    productId?: string,
+    productName?: string,
+    price?: number,
+    stock?: number
   ) {
     super();
-    this.setProductId(productId);
-    this.setProductName(productName);
-    this.setPrice(price);
-    this.setStock(stock);
+    productId && this.setProductId(productId);
+    productName && this.setProductName(productName);
+    price && this.setPrice(price);
+    stock && this.setStock(stock);
   }
 
   private productId: string;

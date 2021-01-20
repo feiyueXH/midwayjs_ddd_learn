@@ -1,7 +1,15 @@
 import { AggregateRoot } from '../../../infrastructure/core/aggregateRoot';
 import { CartItem } from '../entity/cartItem';
+import { Product } from '../valueObject/product';
 
 export class Cart extends AggregateRoot {
+  constructor(cartId?: string, buyerId?: string) {
+    super();
+    cartId && this.setCartId(cartId);
+    buyerId && this.setBuyerId(buyerId);
+    this.cartItems = new Array<CartItem>();
+  }
+
   private cartId: string;
   public getCartId(): string {
     return this.cartId;
@@ -22,9 +30,9 @@ export class Cart extends AggregateRoot {
   public getCartItems(): Array<CartItem> {
     return this.cartItems;
   }
-  public setCartItems(v: Array<CartItem>): void {
-    this.cartItems = v;
-  }
+  // private setCartItems(v: Array<CartItem>): void {
+  //   this.cartItems = v;
+  // }
 
   /**
    * 添加购物车商品
@@ -32,17 +40,24 @@ export class Cart extends AggregateRoot {
    * @param price
    * @param count
    */
-  addCartItem(productId: string, price: number, count: number): void {
+  addCartItem(product: Product, count: number): void {
     //实现添加购物车
+    console.log(` this.cartItems:${this.cartItems}`);
+    console.log(` product.getProductId():${product.getProductId()}`);
     const existItem = this.cartItems.find(
-      item => item.getProductId() === productId
+      item => item.getProductId() === product.getProductId()
     );
+    console.log(`existItem:${existItem}`);
     if (!existItem) {
-      const cartItem = new CartItem(productId, price, count);
+      const cartItem = new CartItem(
+        product.getProductId(),
+        product.getPrice(),
+        count
+      );
       this.cartItems.push(cartItem);
     } else {
       existItem.setCount(existItem.getCount() + count);
-      existItem.setPrice(price);
+      existItem.setPrice(product.getPrice());
     }
   }
 

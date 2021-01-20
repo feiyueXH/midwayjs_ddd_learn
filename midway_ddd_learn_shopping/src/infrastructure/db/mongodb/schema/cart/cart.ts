@@ -1,9 +1,15 @@
 import { Schema } from 'mongoose';
 
-const CartSchema = new Schema({
-  cartId: String,
-  buyerId: String,
-});
+const CartSchema = new Schema(
+  {
+    cartId: String,
+    buyerId: String,
+  },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
 
 CartSchema.virtual('cartItems', {
   ref: 'cartItem',

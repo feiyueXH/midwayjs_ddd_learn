@@ -1,6 +1,6 @@
 import { Provide, Scope, ScopeEnum } from '@midwayjs/decorator';
 import { DeleteResult, IBaseDao, UpdateResult } from '../baseDao';
-import { Model, Document } from 'mongoose';
+import { Model, Document, Query } from 'mongoose';
 @Provide('baseDao')
 @Scope(ScopeEnum.Prototype) //作用域设置为每次调用都会创建一个新的对象
 export class BaseDaoImpl implements IBaseDao {
@@ -53,16 +53,12 @@ export class BaseDaoImpl implements IBaseDao {
     });
   }
 
-  async get(filter: any, projection?: any, options?: any): Promise<Document> {
-    return await this.model.findOne(filter, projection, options);
+  get(filter: any, projection?: any, options?: any): Query<any, Document> {
+    return this.model.findOne(filter, projection, options);
   }
 
-  async list(
-    filter: any,
-    projection?: any,
-    options?: any
-  ): Promise<Document<any>[]> {
-    return await this.model.find(filter, projection, options);
+  list(filter: any, projection?: any, options?: any): Query<any, Document> {
+    return this.model.find(filter, projection, options);
   }
 }
 

@@ -15,26 +15,27 @@ import { ProductVO } from '../../infrastructure/vo/product';
 import { Converter } from '../../infrastructure/util/converter';
 
 @Provide()
-@Controller('/')
+@Controller('/products')
 export class ProductController {
   @Inject()
   productAppService: IProductAppService;
 
-  @Post('/products')
+  @Post('/')
   async addProduct(@Body(ALL) product: SaveProductDTO): Promise<string> {
     await this.productAppService.addProduct(product);
     return '新增商品成功';
   }
 
-  @Get('/products/:productId')
-  async getProduct(@Param() productId: string): Promise<ProductVO> {
+  @Get('/:productId')
+  async getProduct(@Param('productId') productId: string): Promise<ProductVO> {
     const result = await this.productAppService.getProduct(productId);
     return Converter.entityConvertEntity(result, ProductVO);
   }
 
-  @Del('/products/:productId')
-  async removeProduct(@Param() productId: string): Promise<string> {
+  @Del('/:productId')
+  async removeProduct(@Param('productId') productId: string): Promise<string> {
+    console.log(`productId:${productId}`);
     await this.productAppService.removeProduct(productId);
-    return '新增商品成功';
+    return '删除商品成功';
   }
 }

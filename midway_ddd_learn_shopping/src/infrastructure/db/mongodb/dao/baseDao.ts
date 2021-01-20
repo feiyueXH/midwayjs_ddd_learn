@@ -59,7 +59,7 @@
 //   populate(obj: any): Promise<any>;
 // }
 
-import { Model, Document } from 'mongoose';
+import { Model, Document, Query } from 'mongoose';
 
 export interface CreateResult {
   insertedCount: number;
@@ -86,7 +86,7 @@ export interface IBaseDao {
 
   remove(filter: any, options?: any): Promise<DeleteResult>;
 
-  get(filter: any, projection?: any, options?: any): Promise<Document>;
+  get(filter: any, projection?: any, options?: any): Query<any, Document>;
 
-  list(filter: any, projection?: any, options?: any): Promise<Array<Document>>;
+  list(filter: any, projection?: any, options?: any): Query<any, Document>;
 }
