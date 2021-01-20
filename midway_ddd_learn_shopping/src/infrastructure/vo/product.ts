@@ -1,6 +1,6 @@
-import { Entity } from '../../../infrastructure/core/entity';
+import { VO } from '../core/base';
 
-export class Product extends Entity {
+export class ProductVO extends VO {
   constructor(
     productId?: string,
     productName?: string,

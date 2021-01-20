@@ -1,11 +1,11 @@
-import { Entity } from '../../../infrastructure/core/entity';
+import { ValueObject } from '../../../infrastructure/core/valueObject';
 
-export class Product extends Entity {
+export class Product extends ValueObject {
   constructor(
-    productId?: string,
-    productName?: string,
-    price?: number,
-    stock?: number
+    productId: string,
+    productName: string,
+    price: number,
+    stock: number
   ) {
     super();
     this.setProductId(productId);
@@ -18,7 +18,7 @@ export class Product extends Entity {
   public getProductId(): string {
     return this.productId;
   }
-  public setProductId(v: string): void {
+  private setProductId(v: string): void {
     this.productId = v;
   }
 
@@ -26,7 +26,7 @@ export class Product extends Entity {
   public getProductName(): string {
     return this.productName;
   }
-  public setProductName(v: string): void {
+  private setProductName(v: string): void {
     this.productName = v;
   }
 
@@ -34,7 +34,7 @@ export class Product extends Entity {
   public getPrice(): number {
     return this.price;
   }
-  public setPrice(v: number): void {
+  private setPrice(v: number): void {
     this.price = v;
   }
 
@@ -42,7 +42,7 @@ export class Product extends Entity {
   public getStock(): number {
     return this.stock;
   }
-  public setStock(v: number): void {
+  private setStock(v: number): void {
     this.stock = v;
   }
 }

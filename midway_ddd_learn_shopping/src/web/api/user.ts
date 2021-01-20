@@ -1,20 +1,29 @@
-import { Body, Controller, Inject, Post, Provide } from '@midwayjs/decorator';
-import { UserDTO } from '../../application/dto/user';
-import { UserAppService } from '../../application/service/impl/user';
+import {
+  ALL,
+  Body,
+  Controller,
+  Inject,
+  Post,
+  Provide,
+} from '@midwayjs/decorator';
+import { UserDTO } from '../../infrastructure/dto/user';
+import { IUserAppService } from '../../application/service/user';
 
 @Provide()
 @Controller('/')
 export class UserController {
   @Inject()
-  userAppService: UserAppService;
+  userAppService: IUserAppService;
 
   @Post('/users')
-  addUser(@Body() user: UserDTO) {
-    this.userAppService.addUser(user);
+  async addUser(@Body(ALL) user: UserDTO): Promise<string> {
+    await this.userAppService.register(user);
+    return '新增用户成功';
   }
 
   @Post('/login')
-  login(@Body() user: UserDTO) {
-    this.userAppService.login(user);
+  async login(@Body(ALL) user: UserDTO): Promise<string> {
+    await this.userAppService.login(user);
+    return '登陆成功!';
   }
 }

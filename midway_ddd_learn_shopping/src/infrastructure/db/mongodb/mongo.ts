@@ -1,5 +1,5 @@
 import { Provide, Scope, ScopeEnum } from '@midwayjs/decorator';
-let mongoose = require('mongoose');
+const mongoose = require('mongoose');
 /**
  * 使用 Node 自带 Promise 代替 mongoose 的 Promise
  */
@@ -25,10 +25,12 @@ export class MDB {
   private dbMap = new Map();
 
   private getMongoOptions(config: IMongoConfig) {
-    let options = {
-      useMongoClient: true,
+    const options = {
+      // useMongoClient: true,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
       poolSize: 5, // 连接池中维护的连接数
-      reconnectTries: Number.MAX_VALUE,
+      // reconnectTries: Number.MAX_VALUE,
       keepAlive: 120,
       user: config.user,
       pass: config.pass,
@@ -48,12 +50,12 @@ export class MDB {
    */
   private getMongoUri(config: IMongoConfig): string {
     let mongoUri = 'mongodb://';
-    let dbName = config.db;
-    let replicaSet = config.replicaSet;
+    const dbName = config.db;
+    const replicaSet = config.replicaSet;
     if (replicaSet.name) {
       // 如果配置了 replicaSet 的名字 则使用 replicaSet
-      let members = replicaSet.members;
-      for (let member of members) {
+      const members = replicaSet.members;
+      for (const member of members) {
         mongoUri += `${member.host}:${member.port},`;
       }
       mongoUri = mongoUri.slice(0, -1); // 去掉末尾逗号
@@ -66,7 +68,7 @@ export class MDB {
   }
 
   pushDB(config: IMongoConfig) {
-    let mongoClient = mongoose.createConnection(
+    const mongoClient = mongoose.createConnection(
       this.getMongoUri(config),
       this.getMongoOptions(config)
     );
@@ -77,19 +79,19 @@ export class MDB {
     /**
      * Mongo 连接成功回调
      */
-    mongoClient.on('connected', function () {
+    mongoClient.on('connected', () => {
       console.log('Mongoose connected');
     });
     /**
      * Mongo 连接失败回调
      */
-    mongoClient.on('error', function (err) {
+    mongoClient.on('error', err => {
       console.error('Mongoose connection error: ' + err);
     });
     /**
      * Mongo 关闭连接回调
      */
-    mongoClient.on('disconnected', function () {
+    mongoClient.on('disconnected', () => {
       console.log('Mongoose disconnected');
     });
 

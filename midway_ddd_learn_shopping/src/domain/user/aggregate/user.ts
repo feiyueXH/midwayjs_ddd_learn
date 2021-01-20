@@ -1,31 +1,37 @@
-import { AggregateRoot } from '../../../infrastructure/domainCore/aggregateRoot';
-import { UUID } from '../../../infrastructure/util/uuid';
+import { AggregateRoot } from '../../../infrastructure/core/aggregateRoot';
 
 export class User extends AggregateRoot {
-  userId: UUID;
-  userName: string;
-  //密码不仅不可见 还需要加密保存,加密保存有空再做
-  private passWord: string;
-
-  constructor(
-    userId: UUID = UUID.randomUUID(),
-    userName: string,
-    passWord: string
-  ) {
+  constructor(userId?: string, userName?: string, passWord?: string) {
     super();
-    this.userId = userId;
-    this.setUserName(userName);
-    this.setPassWord(passWord);
+    userId && this.setUserId(userId);
+    userName && this.setUserName(userName);
+    passWord && this.setPassWord(passWord);
   }
 
-  setUserName(userName: string): void {
+  private userId: string;
+  public getUserId(): string {
+    return this.userId;
+  }
+  public setUserId(v: string): void {
+    this.userId = v;
+  }
+
+  private userName: string;
+  public getUserName(): string {
+    return this.userName;
+  }
+  public setUserName(userName: string): void {
     if (userName.length < 6) {
       throw new Error('账号长度至少6位数!');
     }
     this.userName = userName;
   }
 
-  setPassWord(passWord: string): void {
+  private passWord: string;
+  public getPassWord(): string {
+    return this.passWord;
+  }
+  public setPassWord(passWord: string): void {
     if (passWord.length < 6) {
       throw new Error('密码长度至少6位数!');
     }

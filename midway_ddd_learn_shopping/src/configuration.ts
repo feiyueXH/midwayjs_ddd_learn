@@ -18,7 +18,7 @@ export class ContainerConfiguration implements ILifeCycle {
     // 建立数据库连接
     const mongoClient = this.MDB.pushDB(this.config);
     // 为数据库链接对象创建Model
-    this.daoFactory.constructModel(this.config.key, mongoClient);
+    await this.daoFactory.constructModel(this.config.key, mongoClient);
   }
 
   async onStop(): Promise<void> {

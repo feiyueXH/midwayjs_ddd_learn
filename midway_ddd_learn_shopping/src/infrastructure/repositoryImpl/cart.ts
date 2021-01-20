@@ -1,20 +1,74 @@
-import { Provide } from '@midwayjs/decorator';
-import { Cart } from '../../domain/cart/aggregate/cart';
+import { Inject, Provide } from '@midwayjs/decorator';
 import { ICartRepository } from '../../domain/cart/repository/cart';
-import { UUID } from '../util/uuid';
+import { Cart } from '../../domain/cart/aggregate/cart';
+import { IBaseDao } from '../db/mongodb/dao/baseDao';
+import { DaoFactory } from '../db/mongodb/daoFactory';
+import { Converter } from '../util/converter';
 
 @Provide()
 export class CartRepository implements ICartRepository {
-  getByUserId(userId: UUID): Cart {
-    throw new Error('Method not implemented.');
+  @Inject()
+  daoFactory: DaoFactory;
+
+  cartDao: IBaseDao;
+
+  cartItemDao: IBaseDao;
+
+  constructor(@Inject() daoFactory: DaoFactory) {
+    //从dao工厂获取Dao
+    this.cartDao = daoFactory.getDao('admin', { modelName: 'cart' });
+    //从dao工厂获取Dao
+    this.cartItemDao = daoFactory.getDao('admin', { modelName: 'cartItem' });
   }
-  save(cart: Cart): void {
-    throw new Error('Method not implemented.');
+  async getByBuyerId(buyId: string): Promise<Cart> {
+    const cart = await this.cartDao.get({ buyId: buyId });
+    if (cart) {
+      cart.populate('cartItems'); //关联查询购物车子项
+      const do_cart: Cart = Converter.pojoConvertEntity(cart, Cart);
+      return do_cart;
+    } else {
+      return null;
+    }
   }
-  delete(id: UUID): void {
-    throw new Error('Method not implemented.');
+
+  async getById(id: string): Promise<Cart> {
+    const cart = await this.cartDao.get({ cartId: id });
+    if (cart) {
+      cart.populate('cartItems'); //关联查询购物车子项
+      const do_cart: Cart = Converter.pojoConvertEntity(cart, Cart);
+      return do_cart;
+    } else {
+      return null;
+    }
   }
-  getById(id: UUID): Cart {
-    throw new Error('Method not implemented.');
+
+  async add(cart: Cart): Promise<boolean> {
+    await this.cartDao.create(cart);
+    return true;
+  }
+
+  async update(cart: Cart): Promise<boolean> {
+    await this.cartDao.update(
+      { cartId: cart.getCartId() },
+      { lastUpdateTime: Date.now() }
+    );
+    await this.cartItemDao.remove({ cartId: cart.getCartId() });
+    for (const item of cart.getCartItems()) {
+      await this.cartItemDao.create(item);
+    }
+    return true;
+  }
+
+  async remove(cart: Cart): Promise<boolean> {
+    await this.cartDao.remove({ cartId: cart.getCartId() });
+    await this.cartItemDao.remove({ cartId: cart.getCartId() });
+    return true;
+  }
+
+  async removeById(id: string): Promise<boolean> {
+    await this.cartDao.remove({ cartId: id });
+    await this.cartItemDao.remove({ cartId: id });
+
+    return true;
   }
 }

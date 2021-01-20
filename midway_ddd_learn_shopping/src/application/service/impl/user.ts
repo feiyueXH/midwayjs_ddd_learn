@@ -1,38 +1,47 @@
 import { Inject, Provide } from '@midwayjs/decorator';
-import { User } from '../../../domain/user/aggregate/user';
-import { IUserRepository } from '../../../domain/user/repository/user';
-import { AppService } from '../../../infrastructure/domainCore/appService';
-import { UserDTO } from '../../dto/user';
+import { UserCreatedEvent } from '../../../domain/user/event/userCreatedEvent';
+import { IUserLoginService } from '../../../domain/user/service/userLoginService';
+import { IUserRegisterService } from '../../../domain/user/service/userRegisterService';
+import { AppService } from '../../../infrastructure/core/appService';
+import { IEventBus } from '../../../infrastructure/core/event';
+
+import { UserDTO } from '../../../infrastructure/dto/user';
+import { UserEventHandler } from '../../event/handler/user/userEventHandler';
+import { IUserAppService } from '../user';
 
 @Provide()
-export class UserAppService extends AppService {
+export class UserAppService extends AppService implements IUserAppService {
+  @Inject('userLoginService')
+  userLoginService: IUserLoginService;
+
+  @Inject('userRegisterService')
+  userRegisterService: IUserRegisterService;
+
   @Inject()
-  userRepository: IUserRepository;
+  eventBus: IEventBus;
 
   constructor() {
     super();
   }
 
   /**
-   * 添加用户
+   * 用户注册
    * @param user
    */
-  addUser(user: UserDTO): void {
-    const _user = new User(null, user.userName, user.passWord);
-    this.userRepository.save(_user);
+  async register(user: UserDTO): Promise<void> {
+    const event = new UserCreatedEvent(user.userName);
+    //订阅事件
+    this.eventBus.subscribe(event, new UserEventHandler());
+    await this.userRegisterService.register(user);
+    //发布事件
+    this.eventBus.publish(event);
   }
 
   /**
    * 登陆
    * @param user
    */
-  login(user: UserDTO): void {
-    const _user = this.userRepository.get(user.userName);
-    if (!_user) {
-      throw new Error('账号不存在!');
-    }
-    if (!_user.equalPassword(user.passWord)) {
-      throw new Error('密码错误!');
-    }
+  async login(user: UserDTO): Promise<void> {
+    await this.userLoginService.login(user);
   }
 }

@@ -1,8 +1,9 @@
-import { App, Provide } from '@midwayjs/decorator';
+import { App, Provide, Scope, ScopeEnum } from '@midwayjs/decorator';
 import { Application } from 'egg';
-import { BaseDao } from './dao/baseDao';
-import { schemaArray } from './index';
+import { IBaseDao } from './dao/baseDao';
+import { schemaArray } from './schema/index';
 @Provide()
+@Scope(ScopeEnum.Singleton) //作用域设置全局唯一
 export class DaoFactory {
   @App()
   app: Application;
@@ -32,19 +33,22 @@ export class DaoFactory {
    * @param dbName 数据库标志
    * @param conn 数据库连接对象
    */
-  public async constructModel(dbName, conn) {
+  public async constructModel(dbName: string, conn: any): Promise<void> {
+    // console.log('schemaArray:', schemaArray);
     this.daoMap[dbName] = [];
     for (const item of schemaArray) {
       let daoName = item.modelName + 'Dao';
-      // console.log('>>>>daoName:' + daoName);
+      // console.log('>>>>dbName:' + dbName);
       const model = conn.model(item.modelName, item.schema); //创建mongoose的Model
       if (!this.app.applicationContext.isAsync(daoName)) {
         daoName = 'baseDao';
       }
-      const dao: BaseDao = await this.app.applicationContext.getAsync(daoName);
+      const dao: IBaseDao = await this.app.applicationContext.getAsync(daoName);
+
+      dao.init(model);
 
       // console.log(dao);
-      dao.init(model);
+
       this.daoMap[dbName].push({
         modelName: item.modelName,
         dao: dao,
@@ -67,8 +71,9 @@ export class DaoFactory {
       },
       this.daoMap[dbName] ? this.daoMap[dbName] : []
     );
-    console.log('index:', index);
-    console.log(this.daoMap[dbName]);
+    // console.log(this.daoMap);
+    // console.log('index:', index);
+    // console.log(this.daoMap[dbName]);
     if (index === -1) {
       return null;
     } else {

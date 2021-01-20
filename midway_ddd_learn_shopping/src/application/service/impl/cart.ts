@@ -1,47 +1,56 @@
+import { Inject } from '@midwayjs/decorator';
 import { Cart } from '../../../domain/cart/aggregate/cart';
 import { ICartRepository } from '../../../domain/cart/repository/cart';
-import { UUID } from '../../../infrastructure/util/uuid';
-import { CartAppService } from '../cart';
-import { Inject } from '@midwayjs/decorator';
-import { IGoodsRepository } from '../../../domain/goods/repository/goods';
-import { SubmitOrderService } from '../../../domain/cart/service/submitOrder';
-export class CartAppServiceImpl implements CartAppService {
+import { Product } from '../../../domain/product/aggregate/product';
+import { IProductRepository } from '../../../domain/product/repository/product';
+import { AppService } from '../../../infrastructure/core/appService';
+import { SaveCartItemDTO } from '../../../infrastructure/dto/cart';
+import { Converter } from '../../../infrastructure/util/converter';
+import { CartVO } from '../../../infrastructure/vo/cart';
+import { ICartAppService } from '../cart';
+
+export class CartAppService extends AppService implements ICartAppService {
   @Inject()
   cartRepository: ICartRepository;
 
   @Inject()
-  goodRepository: IGoodsRepository;
+  productRepository: IProductRepository;
 
-  @Inject()
-  submitOrderService: SubmitOrderService;
-
-  getCart(userId: UUID): Cart {
-    let cart = this.cartRepository.getByUserId(userId);
-    if (cart === null) {
-      cart = new Cart(UUID.randomUUID(), userId);
-      this.cartRepository.save(cart);
-    }
-    return cart;
+  constructor() {
+    super();
+  }
+  async getCartBuyerId(buyerId: string): Promise<CartVO> {
+    const cart: Cart = await this.cartRepository.getByBuyerId(buyerId);
+    return Converter.entityConvertPojo(cart, CartVO); //将DO转为VO
   }
 
-  addCartItem(id: UUID, goodId: UUID, num: number): void {
-    const cart = this.cartRepository.getById(id);
-    if (cart === null) {
-      throw new Error('查无购物车');
+  async addCartItem(buyerId: string, dto: SaveCartItemDTO): Promise<void> {
+    const cart: Cart = await this.cartRepository.getByBuyerId(buyerId);
+    if (!cart) {
+      throw new Error('查询不到购物车!');
     }
-    const goods = this.goodRepository.getById(goodId);
-    if (cart === null) {
-      throw new Error('查无商品');
-    }
-    cart.addCartItem(goods, num);
-    this.cartRepository.save(cart);
-  }
 
-  submitOrder(cartId: UUID, remark: string) {
-    const cart = this.cartRepository.getById(cartId);
-    if (cart === null) {
-      throw new Error('查无购物车');
+    const product: Product = await this.productRepository.getById(
+      dto.productId
+    );
+    if (!product) {
+      throw new Error('查询不到商品!');
     }
-    const orderForm = this.submitOrderService.submit(cart, remark);
+
+    cart.addCartItem(product.getProductId(), product.getPrice(), dto.count);
+    await this.cartRepository.update(cart);
+  }
+  async removeCartItem(buyerId: string, productId: string): Promise<void> {
+    const cart: Cart = await this.cartRepository.getByBuyerId(buyerId);
+    if (!cart) {
+      throw new Error('查询不到购物车!');
+    }
+
+    if (!cart.existCartItem(productId)) {
+      throw new Error('购物车不存在该商品!');
+    }
+
+    cart.removeCartItem(productId);
+    await this.cartRepository.update(cart);
   }
 }

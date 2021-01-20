@@ -1,7 +1,8 @@
-import { Cart } from '../../domain/cart/aggregate/cart';
-import { UUID } from '../../infrastructure/util/uuid';
+import { SaveCartItemDTO } from '../../infrastructure/dto/cart';
+import { CartVO } from '../../infrastructure/vo/cart';
 
-export interface CartAppService {
-  getCart(userId: UUID): Cart;
-  addCartItem(cartId: UUID, goodsId: UUID, num: number): void;
+export interface ICartAppService {
+  getCartBuyerId(buyerId: string): Promise<CartVO>;
+  addCartItem(cartId: string, dto: SaveCartItemDTO): Promise<void>;
+  removeCartItem(cartId: string, productId: string): Promise<void>;
 }

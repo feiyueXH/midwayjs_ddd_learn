@@ -1,27 +1,33 @@
-import { Entity } from '../../../infrastructure/domainCore/entity';
-import { UUID } from '../../../infrastructure/util/uuid';
-
+import { Entity } from '../../../infrastructure/core/entity';
 export class CartItem extends Entity {
-  id: UUID;
-  quantity: number; //数量
-  salePrice: number; //售价
-
-  constructor(goodsId: UUID, quantity: number, salePrice: number) {
+  constructor(productId: string, price: number, count: number) {
     super();
-
-    this.id = goodsId;
-    this.setQuantity(quantity);
-    this.setSalePrice(salePrice);
+    this.productId = productId;
+    this.price = price;
+    this.count = count;
   }
 
-  setQuantity(quantity: number): void {
-    if (quantity === 0) {
-      throw new Error('商品数量不能为0');
-    }
-    this.quantity = quantity;
+  private productId: string;
+  public getProductId(): string {
+    return this.productId;
+  }
+  public setProductId(v: string): void {
+    this.productId = v;
   }
 
-  setSalePrice(salePrice: number): void {
-    this.salePrice = salePrice;
+  private price: number;
+  public getPrice(): number {
+    return this.price;
+  }
+  public setPrice(v: number): void {
+    this.price = v;
+  }
+
+  private count: number;
+  public getCount(): number {
+    return this.count;
+  }
+  public setCount(v: number): void {
+    this.count = v;
   }
 }

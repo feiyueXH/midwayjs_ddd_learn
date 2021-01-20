@@ -1,32 +1,46 @@
 import { Inject, Provide } from '@midwayjs/decorator';
 import { User } from '../../domain/user/aggregate/user';
 import { IUserRepository } from '../../domain/user/repository/user';
-import { BaseDao } from '../db/mongodb/dao/baseDao';
+import { IBaseDao } from '../db/mongodb/dao/baseDao';
 import { DaoFactory } from '../db/mongodb/daoFactory';
-import { UUID } from '../util/uuid';
+import { Converter } from '../util/converter';
 
 @Provide()
 export class UserRepository implements IUserRepository {
   @Inject()
   daoFactory: DaoFactory;
 
-  userDao: BaseDao;
+  userDao: IBaseDao;
 
   constructor(@Inject() daoFactory: DaoFactory) {
     //从dao工厂获取Dao
     this.userDao = daoFactory.getDao('admin', { modelName: 'user' });
   }
 
-  getById(id: UUID): User {
-    throw new Error('Method not implemented.');
+  async getById(id: string): Promise<User> {
+    const result = await this.userDao.get({ userId: id });
+    if (result) {
+      return Converter.pojoConvertEntity(result, User);
+    } else {
+      return null;
+    }
   }
-  save(user: User): void {
-    this.userDao.create(user);
+  async save(user: User): Promise<boolean> {
+    await this.userDao.create(user);
+    return true;
   }
-  remove(id: UUID): void {
-    throw new Error('Method not implemented.');
+  async remove(id: string): Promise<boolean> {
+    await this.userDao.remove({ userId: id });
+    return true;
   }
-  get(userName: string): User {
-    throw new Error('Method not implemented.');
+
+  async get(userName: string): Promise<User> {
+    const result = await this.userDao.get({ userName: userName });
+    if (result) {
+      console.log(result);
+      return Converter.pojoConvertEntity(result, User);
+    } else {
+      return null;
+    }
   }
 }
