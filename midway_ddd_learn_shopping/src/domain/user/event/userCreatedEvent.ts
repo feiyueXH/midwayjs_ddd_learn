@@ -4,7 +4,7 @@ export class UserCreatedEvent extends DomainEvent {
   createTime: Date;
   userName: string;
   constructor(userName: string) {
-    super();
+    super(null);
     this.setCreateTime(new Date());
     this.userName = userName;
   }

@@ -1,6 +1,6 @@
-import { Entity } from '../../../infrastructure/core/entity';
+import { AggregateRoot } from '../../../infrastructure/core/aggregateRoot';
 
-export class Product extends Entity {
+export class Product extends AggregateRoot {
   constructor(
     productId?: string,
     productName?: string,

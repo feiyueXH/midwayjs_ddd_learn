@@ -1,10 +1,12 @@
 import { Provide, Scope, ScopeEnum } from '@midwayjs/decorator';
 import { UUID } from '../util/uuid';
+import { IEntity } from './entity';
 
 /**
  * 领域事件接口 一般用于类型来使用
  */
 export interface IDomainEvent {
+  source: IEntity;
   uuid: string;
   createTime: Date;
 
@@ -20,8 +22,10 @@ export interface IDomainEvent {
 export class DomainEvent implements IDomainEvent {
   uuid: string;
   createTime: Date;
+  source: IEntity;
 
-  constructor() {
+  constructor(source: IEntity) {
+    this.source = source;
     this.uuid = UUID.randomUUID();
     this.setCreateTime(new Date());
   }
