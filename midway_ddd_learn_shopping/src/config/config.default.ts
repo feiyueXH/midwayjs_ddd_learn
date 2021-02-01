@@ -21,25 +21,21 @@ export default (appInfo: EggAppInfo) => {
 
   config.mongoose = {
     key: 'admin',
-    user: '',
-    pass: '',
-    host: 'localhost',
-    port: '27017',
+    user: 'test',
+    pass: 'test',
+    host: '',
+    port: '',
     replicaSet: {
-      name: '',
+      name: 'mgset-17098013',
       members: [
-        // {
-        //   host: 'localhost',
-        //   port: '27017',
-        // },
-        // {
-        //   host: 'localhost',
-        //   port: '27027',
-        // },
-        // {
-        //   host: 'localhost',
-        //   port: '27037',
-        // },
+        {
+          host: '127.0.0.1',
+          port: 3717,
+        },
+        {
+          host: '127.0.0.2',
+          port: 3717,
+        },
       ],
     },
     db: 'test',

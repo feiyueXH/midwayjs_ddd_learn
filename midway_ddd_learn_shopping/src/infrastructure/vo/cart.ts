@@ -1,4 +1,4 @@
-import { VO } from '../core/base';
+import { VO } from '../core/base/base';
 
 export class CartItemVO extends VO {
   private productId: string;

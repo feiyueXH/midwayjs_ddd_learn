@@ -1,4 +1,4 @@
-import { User } from '../aggregate/user';
+import { User } from '../model/user/user';
 
 export interface IUserRepository {
   getById(id: string): Promise<User>;

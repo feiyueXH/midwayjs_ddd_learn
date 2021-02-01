@@ -1,4 +1,4 @@
-import { DomainEvent } from '../../../infrastructure/core/event';
+import { DomainEvent } from '../../../infrastructure/core/ddd/event';
 
 export class UserCreatedEvent extends DomainEvent {
   createTime: Date;

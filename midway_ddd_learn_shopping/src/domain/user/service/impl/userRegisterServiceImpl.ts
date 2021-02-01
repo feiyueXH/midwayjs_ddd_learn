@@ -1,7 +1,7 @@
 import { Inject, Provide } from '@midwayjs/decorator';
 import { UserDTO } from '../../../../infrastructure/dto/user';
-import { DomainService } from '../../../../infrastructure/core/domainService';
-import { User } from '../../aggregate/user';
+import { DomainService } from '../../../../infrastructure/core/ddd/domainService';
+import { User } from '../../model/user/user';
 import { IUserRepository } from '../../repository/user';
 import { IUserRegisterService } from '../userRegisterService';
 import { UUID } from '../../../../infrastructure/util/uuid';

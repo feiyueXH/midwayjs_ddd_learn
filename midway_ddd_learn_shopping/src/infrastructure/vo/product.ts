@@ -1,4 +1,4 @@
-import { VO } from '../core/base';
+import { VO } from '../core/base/base';
 
 export class ProductVO extends VO {
   constructor(

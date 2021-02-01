@@ -1,4 +1,4 @@
-import { DTO } from '../core/base';
+import { DTO } from '../core/base/base';
 
 export class QueryCartDTO extends DTO {
   buyerId: string;
