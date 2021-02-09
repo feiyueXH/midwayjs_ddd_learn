@@ -1,4 +1,4 @@
-import { Entity } from '../../../../../infrastructure/core/ddd/entity';
+import { Entity } from '../../../../../infrastructure/core/domain/entity';
 export class CartItem extends Entity {
   constructor(productId: string, price: number, count: number) {
     super();

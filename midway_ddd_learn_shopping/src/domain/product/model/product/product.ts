@@ -1,4 +1,4 @@
-import { AggregateRoot } from '../../../../infrastructure/core/ddd/aggregateRoot';
+import { AggregateRoot } from '../../../../infrastructure/core/domain/aggregate-root';
 
 export class Product extends AggregateRoot {
   constructor(

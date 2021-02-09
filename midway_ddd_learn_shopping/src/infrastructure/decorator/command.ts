@@ -4,13 +4,10 @@ import {
   saveClassMetadata,
   saveModule,
 } from '@midwayjs/decorator';
-import { CommandBase } from '../core/cqrs/command';
 
 const MODULE_KEY = 'decorator:subscribeCommand';
 
-export function SubscribeCommand<C extends CommandBase>(
-  cmdClazz: new () => C | (new () => C)[]
-): ClassDecorator {
+export function SubscribeCommand<C extends any>(cmdClazz: C): ClassDecorator {
   return (target: any) => {
     console.log('SubscribeCommand:', cmdClazz);
 

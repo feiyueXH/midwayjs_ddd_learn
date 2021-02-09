@@ -1,8 +1,8 @@
-import { AggregateRoot } from '../../../../infrastructure/core/ddd/aggregateRoot';
-import { OrderItem } from './entity/orderItem';
-import { AddressInfo } from './valueObject/addressInfo';
-import { OrderStatus } from './valueObject/orderStatus';
-import { UserInfo } from './valueObject/userInfo';
+import { AggregateRoot } from '../../../../infrastructure/core/domain/aggregate-root';
+import { OrderItem } from './entity/order-item';
+import { AddressInfo } from './value-object/address-info';
+import { OrderStatus } from './value-object/order-status';
+import { UserInfo } from './value-object/user-info';
 
 export class Order extends AggregateRoot {
   private orderId: string;

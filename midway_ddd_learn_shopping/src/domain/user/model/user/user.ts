@@ -1,4 +1,4 @@
-import { AggregateRoot } from '../../../../infrastructure/core/ddd/aggregateRoot';
+import { AggregateRoot } from '../../../../infrastructure/core/domain/aggregate-root';
 
 export class User extends AggregateRoot {
   constructor(userId?: string, userName?: string, passWord?: string) {

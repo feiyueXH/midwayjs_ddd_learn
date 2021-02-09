@@ -1,6 +1,6 @@
-import { AggregateRoot } from '../../../../infrastructure/core/ddd/aggregateRoot';
+import { AggregateRoot } from '../../../../infrastructure/core/domain/aggregate-root';
 import { CartItem } from './entity/cartItem';
-import { Product } from './valueObject/product';
+import { Product } from './value-object/product';
 
 export class Cart extends AggregateRoot {
   constructor(cartId?: string, buyerId?: string) {

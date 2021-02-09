@@ -1,8 +1,8 @@
 import { Init, Inject, Provide } from '@midwayjs/decorator';
 import { User } from '../../domain/user/model/user/user';
 import { IUserRepository } from '../../domain/user/repository/user';
-import { MongoDbContext } from '../db/mongodb/dbContext';
-import { Converter } from '../util/converter';
+import { MongoDbContext } from '../db/mongodb/db-context';
+import { Converter } from '../common/util/converter';
 
 @Provide()
 export class UserRepository implements IUserRepository {

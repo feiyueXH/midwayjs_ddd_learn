@@ -9,10 +9,13 @@ import {
   Post,
   Provide,
 } from '@midwayjs/decorator';
-import { ICartCommandService } from '../../application/command/service/cart';
-import { ICartQueryService } from '../../application/query/service/cart';
-import { SaveCartItemDTO } from '../../infrastructure/dto/cart';
-import { HttpHelper } from '../../infrastructure/http/helper';
+import { AddCartItemCommand } from '../../application/command/sale/impl/add-cart-item.command';
+import { RemoveCartItemCommand } from '../../application/command/sale/impl/remove-cart-item.command';
+import { GetCartDetailQuery } from '../../application/query/sale/impl/get-cart-detail.query';
+import { HttpHelper } from '../../infrastructure/common/http/helper';
+import { ICommandBus } from '../../infrastructure/core/command-bus';
+import { IQueryBus } from '../../infrastructure/core/query-bus';
+import { SaveCartItemDTO } from '../dto/cart';
 
 @Provide()
 @Controller('/carts')
@@ -21,14 +24,14 @@ export class CartController {
   httpHelper: HttpHelper;
 
   @Inject()
-  cartCommandService: ICartCommandService;
+  commandBus: ICommandBus;
 
   @Inject()
-  cartQueryService: ICartQueryService;
+  queryBus: IQueryBus;
 
   @Get('/:userId')
   async getCart(@Param('userId') userId: string): Promise<void> {
-    const cart = await this.cartQueryService.getCartBuyerId(userId);
+    const cart = await this.queryBus.send(new GetCartDetailQuery(userId));
     this.httpHelper.success(cart, '获取购物车成功');
   }
 
@@ -37,8 +40,9 @@ export class CartController {
     @Param('userId') userId: string,
     @Body(ALL) dto: SaveCartItemDTO
   ): Promise<void> {
-    console.log(`userId:${userId}`);
-    await this.cartCommandService.addCartItem(userId, dto);
+    await this.commandBus.send(
+      new AddCartItemCommand(userId, dto.productId, dto.count)
+    );
     this.httpHelper.success(null, '添加购物车商品成功');
   }
 
@@ -47,7 +51,7 @@ export class CartController {
     @Param('userId') userId: string,
     @Param('productId') productId: string
   ): Promise<void> {
-    await this.cartCommandService.removeCartItem(userId, productId);
+    await this.commandBus.send(new RemoveCartItemCommand(userId, productId));
     this.httpHelper.success(null, '移除商品成功');
   }
 }

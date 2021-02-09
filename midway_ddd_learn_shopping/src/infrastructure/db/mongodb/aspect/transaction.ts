@@ -7,10 +7,10 @@ import {
   JoinPoint,
   Provide,
 } from '@midwayjs/decorator';
-import { Application, Context } from 'egg';
+import { Application } from 'egg';
 
-import { MongoDbContext } from '../dbContext';
-import { IMongoUnitOfWork } from '../dbUow';
+import { MongoDbContext } from '../db-context';
+import { IMongoUnitOfWork } from '../db-uow';
 
 /**
  * @Aspect使用介绍
@@ -38,10 +38,13 @@ export class TransactionAspect implements IMethodAspect {
       point.methodName
     );
     if (/^save|^create|^remove|^update|^get|^list/.test(point.methodName)) {
-      const ctx: Context = point.target.ctx;
-      const uow: IMongoUnitOfWork = await ctx.requestContext.getAsync(
+      const uow: IMongoUnitOfWork = await this.app.applicationContext.getAsync(
         'mongoUnitOfWork'
       );
+      console.log('uow.id', uow.id);
+      // const uow: IMongoUnitOfWork = await ctx.requestContext.getAsync(
+      //   'mongoUnitOfWork'
+      // );
       if (/^save|^create|^remove/.test(point.methodName)) {
         //如果是增删操作,options为作为第二个参数
         point.args[2] = uow.register(point.args[2] || {});

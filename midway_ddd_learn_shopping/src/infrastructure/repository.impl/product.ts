@@ -1,8 +1,8 @@
 import { Init, Inject, Provide } from '@midwayjs/decorator';
 import { IProductRepository } from '../../domain/product/repository/product';
 import { Product } from '../../domain/product/model/product/product';
-import { Converter } from '../util/converter';
-import { MongoDbContext } from '../db/mongodb/dbContext';
+import { Converter } from '../common/util/converter';
+import { MongoDbContext } from '../db/mongodb/db-context';
 
 @Provide()
 export class ProductRepository implements IProductRepository {
