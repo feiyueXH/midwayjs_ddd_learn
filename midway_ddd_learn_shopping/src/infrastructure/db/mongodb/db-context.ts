@@ -204,6 +204,6 @@ export class MongoDbContext {
     options?: IOptions
   ): Promise<Document[]> {
     const model = this.getModel(modelName);
-    return await model.find(filter, projection, options);
+    return model.find(filter, projection, options);
   }
 }

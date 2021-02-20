@@ -8,16 +8,18 @@ import {
   Param,
   Post,
   Provide,
+  Query,
 } from '@midwayjs/decorator';
 import { Converter } from '../../infrastructure/common/util/converter';
 import { HttpHelper } from '../../infrastructure/common/http/helper';
 import { ProductVO } from '../vo/product';
 import { ICommandBus } from '../../infrastructure/core/command-bus';
 import { AddProductCommand } from '../../application/command/product/impl/add-product.command';
-import { SaveProductDTO } from '../dto/product';
+import { ListProductDTO, SaveProductDTO } from '../dto/product';
 import { RemoveProductCommand } from '../../application/command/product/impl/remove-product.command';
 import { IQueryBus } from '../../infrastructure/core/query-bus';
 import { GetProductDetailQuery } from '../../application/query/product/impl/get-product-detail.query';
+import { ListProductQuery } from '../../application/query/product/impl/list-product.query';
 
 @Provide()
 @Controller('/products')
@@ -50,6 +52,14 @@ export class ProductController {
       Converter.entityConvertEntity(product, ProductVO),
       '查询商品成功'
     );
+  }
+
+  @Get('/')
+  async listProduct(@Query(ALL) query: ListProductDTO): Promise<void> {
+    const products = await this.queryBus.send(
+      new ListProductQuery(query.productName, query.page, query.limit)
+    );
+    this.httpHelper.success(products, '查询商品成功');
   }
 
   @Del('/:productId')

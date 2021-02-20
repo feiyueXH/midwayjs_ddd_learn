@@ -1,5 +1,5 @@
 import { QueryBase } from '../../../../infrastructure/core/application/query';
-import { IGetProductDetailQuery } from './interface';
+import { IGetProductDetailQuery } from '../interface';
 
 export class GetProductDetailQuery
   extends QueryBase

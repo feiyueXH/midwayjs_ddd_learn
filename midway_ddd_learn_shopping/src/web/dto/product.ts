@@ -26,3 +26,9 @@ export class RemoveProductDTO {
   @Rule(RuleType.string().required())
   productId: string;
 }
+
+export class ListProductDTO {
+  productName: string;
+  page: number;
+  limit: number;
+}
